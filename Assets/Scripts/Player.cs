@@ -5,6 +5,16 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public float moveSpeed;
+    public float jumpPower;
+
+    private bool isJump;
+
+    private Rigidbody rigid;
+
+    void Awake()
+    {
+        rigid = GetComponent<Rigidbody>();
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -42,6 +52,12 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Move();
+        Jump();
+    }
+
+    private void Move()
+    {
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
 
@@ -50,5 +66,23 @@ public class Player : MonoBehaviour
         moveVec = new Vector3(h, 0f, v).normalized * moveSpeed * Time.deltaTime;
 
         transform.position += moveVec;
+    }
+
+    private void Jump()
+    {
+        if(Input.GetKeyDown(KeyCode.Space) && !isJump)
+        {
+            isJump = true;
+
+            rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.collider.CompareTag("Floor"))
+        {
+            isJump = false;
+        }
     }
 }
