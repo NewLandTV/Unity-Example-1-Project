@@ -7,7 +7,10 @@ public class Player : MonoBehaviour
     public float moveSpeed;
     public float jumpPower;
 
+    public int hp;
+
     private bool isJump;
+    private bool isOver;
 
     private Rigidbody rigid;
 
@@ -52,8 +55,11 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Move();
-        Jump();
+        if (!isOver)
+        {
+            Move();
+            Jump();
+        }
     }
 
     private void Move()
@@ -78,11 +84,29 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void GameOver()
+    {
+        isOver = true;
+        hp = 0;
+        Debug.Log("Game Over !!");
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
         if(collision.collider.CompareTag("Floor"))
         {
             isJump = false;
+        }
+        else if(collision.collider.CompareTag("Wall"))
+        {
+            if (hp - 1 <= 0)
+            {
+                GameOver();
+            }
+            else
+            {
+                hp--;
+            }
         }
     }
 }
