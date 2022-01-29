@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class Player : MonoBehaviour
 
     private bool isJump;
     private bool isOver;
+    public bool isStageAllClear;
 
     private Rigidbody rigid;
 
@@ -19,7 +21,6 @@ public class Player : MonoBehaviour
         rigid = GetComponent<Rigidbody>();
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         Debug.Log("Hello, Unity!");
@@ -52,11 +53,16 @@ public class Player : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (!isOver)
         {
+            if(isStageAllClear)
+            {
+                transform.position = Vector3.zero;
+
+                return;
+            }
             Move();
             Jump();
         }
@@ -88,7 +94,8 @@ public class Player : MonoBehaviour
     {
         isOver = true;
         hp = 0;
-        Debug.Log("Game Over !!");
+
+        SceneManager.LoadScene(1);
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -99,14 +106,19 @@ public class Player : MonoBehaviour
         }
         else if(collision.collider.CompareTag("Wall"))
         {
-            if (hp - 1 <= 0)
-            {
-                GameOver();
-            }
-            else
-            {
-                hp--;
-            }
+            RemoveHealth();
+        }
+    }
+
+    public void RemoveHealth()
+    {
+        if (hp - 1 <= 0)
+        {
+            GameOver();
+        }
+        else
+        {
+            hp--;
         }
     }
 }
